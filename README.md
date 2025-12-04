@@ -30,7 +30,7 @@ This project uses [`uv`](https://github.com/astral-sh/uv) for dependency and env
   <summary>Claude Code</summary>
 
 ```bash
-claude mcp add --transport stdio wechat-mcp -- uv --directory {path/to/wechat-mcp} run wechat-mcp --transport stdio
+claude mcp add --transport stdio wechat-mcp -- uv --directory $(pwd) run wechat-mcp
 ```
 
 </details>
