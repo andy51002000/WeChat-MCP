@@ -67,8 +67,8 @@ uv run wechat-mcp --transport streamable-http --port 3001
 
 The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mcp.tool()` functions:
 
-- `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`
-  Opens the chat for `contact_name` (first via the left session list, then via the search box if needed) and returns up to `last_n` recent messages from that chat. Each message is a JSON object:
+- `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`  
+  Opens the chat for `contact_name` (first via the left session list, then via the search box if needed), then uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
 
   ```json
   {
