@@ -116,4 +116,4 @@ The helper scripts and MCP tools rely on:
 
 ## TODO
 
-- [ ] Scroll to get full/more history messages
+- [x] Scroll to get full/more history messages
