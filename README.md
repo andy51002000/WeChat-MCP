@@ -24,14 +24,6 @@ This project uses [`uv`](https://github.com/astral-sh/uv) for dependency and env
 
    This will create a virtual environment (if needed) and install dependencies defined in `pyproject.toml`.
 
-3. To run any script or the MCP server within the environment:
-
-   ```bash
-   uv run python list_chats.py
-   # or
-   uv run wechat-mcp --mcp-debug
-   ```
-
 ## Add the MCP server to configuration
 
 <details>
@@ -67,7 +59,7 @@ uv run wechat-mcp --transport streamable-http --port 3001
 
 The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mcp.tool()` functions:
 
-- `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`  
+- `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`
   Opens the chat for `contact_name` (first via the left session list, then via the search box if needed), then uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
 
   ```json
