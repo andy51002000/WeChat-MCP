@@ -36,9 +36,11 @@ This project uses [`uv`](https://github.com/astral-sh/uv) for dependency and env
 
 <details>
   <summary>Claude Code</summary>
+
 ```bash
 claude mcp add --transport stdio wechat-mcp --env WECHAT_MCP_AI_PROVIDER=ollama WECHAT_MCP_AI_MODEL=qwen2.5:14b -- uv --directory {path/to/wechat-mcp} run wechat-mcp --transport stdio
 ```
+
 </details>
 
 The MCP server entrypoint is `wechat_mcp.mcp_server:main`, exposed as the `wechat-mcp` console script.
