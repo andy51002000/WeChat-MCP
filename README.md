@@ -148,3 +148,7 @@ The helper scripts and MCP tools rely on:
 - Accessibility tree inspection to find chat lists, search fields, and message lists
 - Screen capture to classify message senders (`ME` vs `OTHER` vs `UNKNOWN`)
 - Synthetic keyboard events to search, focus inputs, and send messages
+
+## TODO
+
+- [ ] Scroll to get full/more history messages
