@@ -2,8 +2,8 @@
 
 This project provides an MCP server that automates WeChat on macOS using the Accessibility API and screen capture. It exposes tools that LLMs can call to:
 
-- Fetch recent messages for a specific contact
-- Generate and send a reply to a contact based on recent history
+- Fetch recent messages for a specific chat (contact or group)
+- Generate and send a reply to a chat based on recent history
 
 ## Environment setup (using `uv`)
 
@@ -59,8 +59,8 @@ uv run wechat-mcp --transport streamable-http --port 3001
 
 The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mcp.tool()` functions:
 
-- `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`
-  Opens the chat for `contact_name` (first via the left session list, then via the global search box if needed). When using global search it prefers an **exact name match** in the "Contacts" section, then in the "Group Chats" section, and explicitly ignores matches under "Chat History", "Official Accounts", or "More". If no exact match is found, it does **not** fall back to the top search result; instead it returns a structured error plus up to 15 candidate names from each of "Contacts" and "Group Chats" so the LLM can choose a more specific target. Once a chat is successfully opened, it uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
+- `fetch_messages_by_chat(chat_name: str, last_n: int = 50) -> list[dict]`
+  Opens the chat for `chat_name` (first via the left session list, then via the global search box if needed). When using global search it prefers an **exact name match** in the "Contacts" section, then in the "Group Chats" section, and explicitly ignores matches under "Chat History", "Official Accounts", or "More". If no exact match is found, it does **not** fall back to the top search result; instead it returns a structured error plus up to 15 candidate names from each of "Contacts" and "Group Chats" so the LLM can choose a more specific target. Once a chat is successfully opened, it uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
 
   ```json
   {
@@ -69,12 +69,12 @@ The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mc
   }
   ```
 
-- `reply_to_messages_by_contact(contact_name: str, reply_message: str | null = null, last_n: int = 50) -> dict`
-  Ensures the chat for `contact_name` is open (skipping an extra click when the current chat already matches), and (optionally) sends the provided `reply_message` using the Accessibility-based `send_message` helper. This tool is intended to be driven by the LLM that is already using this MCP: first call `fetch_messages_by_contact`, then compose a reply, then call this tool with that reply. Returns:
+- `reply_to_messages_by_chat(chat_name: str, reply_message: str | null = null) -> dict`
+  Ensures the chat for `chat_name` is open (skipping an extra click when the current chat already matches), and (optionally) sends the provided `reply_message` using the Accessibility-based `send_message` helper. This tool is intended to be driven by the LLM that is already using this MCP: first call `fetch_messages_by_chat`, then compose a reply, then call this tool with that reply. Returns:
 
   ```json
   {
-    "contact_name": "The contact",
+    "chat_name": "The chat (contact or group)",
     "reply_message": "The message that was sent (or null)",
     "sent": true
   }
