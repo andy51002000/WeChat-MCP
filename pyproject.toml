@@ -1,7 +1,7 @@
 [project]
 name = "wechat-mcp-server"
 version = "0.1.0"
-description = "WeChat MCP server and helper scripts for reading and replying to messages via macOS Accessibility APIs"
+description = "WeChat MCP server for reading and replying to messages via macOS Accessibility APIs"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "Banghao Chi", email = "banghao2@illinois.edu" }]
