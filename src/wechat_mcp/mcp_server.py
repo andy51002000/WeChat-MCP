@@ -23,7 +23,7 @@ mcp = FastMCP("WeChat Helper MCP Server")
 def fetch_messages_by_contact(
     contact_name: str,
     last_n: int = 50,
-) -> list[dict[str, str]]:
+) -> list[dict[str, Any]]:
     """
     Fetch recent messages for a specific contact.
 
