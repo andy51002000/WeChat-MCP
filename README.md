@@ -110,3 +110,4 @@ The helper scripts and MCP tools rely on:
 
 - [x] Detect and switch to contact by clicking
 - [x] Scroll to get full/more history messages
+- [ ] Get full list of contacts and groups on failure of searching
