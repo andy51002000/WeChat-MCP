@@ -60,7 +60,7 @@ uv run wechat-mcp --transport streamable-http --port 3001
 The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mcp.tool()` functions:
 
 - `fetch_messages_by_contact(contact_name: str, last_n: int = 50) -> list[dict]`
-  Opens the chat for `contact_name` (first via the left session list, then via the search box if needed), then uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
+  Opens the chat for `contact_name` (first via the left session list, then via the global search box if needed). When using global search it prefers an **exact name match** in the "Contacts" section, then in the "Group Chats" section, and explicitly ignores matches under "Chat History", "Official Accounts", or "More". If no exact match is found, it does **not** fall back to the top search result; instead it returns a structured error plus up to 15 candidate names from each of "Contacts" and "Group Chats" so the LLM can choose a more specific target. Once a chat is successfully opened, it uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
 
   ```json
   {
@@ -110,4 +110,4 @@ The helper scripts and MCP tools rely on:
 
 - [x] Detect and switch to contact by clicking
 - [x] Scroll to get full/more history messages
-- [ ] Get full list of contacts and groups on failure of searching
+- [x] Prefer exact match in Contacts/Group Chats search results
