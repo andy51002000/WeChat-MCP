@@ -65,6 +65,9 @@ The MCP server entrypoint is `wechat_mcp.mcp_server:main`, exposed as the `wecha
 Typical invocation:
 
 ```bash
+# For pip
+wechat-mcp --transport stdio
+# For uv
 uv run wechat-mcp --transport stdio
 ```
 
@@ -77,6 +80,9 @@ Supported transports:
 Example:
 
 ```bash
+# For pip
+wechat-mcp --transport streamable-http --port 3001
+# For uv
 uv run wechat-mcp --transport streamable-http --port 3001
 ```
 
