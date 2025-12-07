@@ -221,7 +221,7 @@ def find_search_field(ax_app):
 def focus_and_type_search(ax_app, text: str):
     """
     Focus the WeChat sidebar search field and type the given text using
-    Command+A and Command+V, similar to search_contacts.py.
+    Command+A and Command+V
     """
     search = find_search_field(ax_app)
 
