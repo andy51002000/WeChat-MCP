@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import random
-import time
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
@@ -129,8 +127,6 @@ def reply_to_messages_by_chat(
 
         sent = False
         if reply_message is not None and reply_message.strip():
-            random_delay = 0.1 + random.random()
-            time.sleep(random_delay)
             send_message(reply_message)
             sent = True
             logger.info(
