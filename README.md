@@ -82,6 +82,8 @@ The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mc
 
 If an error occurs, the tools return an object containing an `"error"` field describing the issue.
 
+Internally, `fetch_messages_by_chat` scrolls the WeChat message list using the system’s standard macOS scroll semantics (no third‑party scroll reversal tools enabled) and continues scrolling until it has assembled the true last `last_n` messages or reached the beginning of the chat history, rather than stopping after a fixed number of scroll steps.
+
 ## Logging
 
 The project has a comprehensive logging setup:
