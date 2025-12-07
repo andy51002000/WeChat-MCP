@@ -262,7 +262,7 @@ def open_chat_for_contact(chat_name: str) -> dict[str, Any] | None:
     - Otherwise, prefer an exact match under the "Group Chats" section.
     - If no exact match is visible, expand "View All" for Contacts and
       Group Chats (if present) and scroll through results, looking for
-      an exact match while explicitly ignoring the "Chat History", "Official Accounts", and "More" sections.
+      an exact match while explicitly ignoring the "Chat History", "Official Accounts", "Internet search results", and "More" sections.
 
     If no exact match can be found, this function does **not** fall back
     to the top search result. Instead, it returns a dict of the form:
@@ -395,12 +395,19 @@ def _collect_search_entries(search_list) -> list[SearchEntry]:
 
 def _build_section_headers(entries: list[SearchEntry]) -> dict[str, float]:
     """
-    Map known section titles ("Contacts", "Group Chats", "Chat History", "Official Accounts", "More")
+    Map known section titles ("Contacts", "Group Chats", "Chat History", "Official Accounts", "Internet search results", "More")
     to their vertical Y coordinate within the search list.
     """
     headers: dict[str, float] = {}
     for entry in entries:
-        if entry.text in ("Contacts", "Group Chats", "Chat History", "Official Accounts", "More"):
+        if entry.text in (
+            "Contacts",
+            "Group Chats",
+            "Chat History",
+            "Official Accounts",
+            "Internet search results",
+            "More"
+        ):
             headers[entry.text] = entry.y
     return headers
 
@@ -431,7 +438,7 @@ def _find_exact_match_in_entries(
     - Exact match under "Contacts"
     - Exact match under "Group Chats"
 
-    Entries classified as "Chat History", "Official Accounts", or "More" are ignored.
+    Entries classified as "Chat History", "Official Accounts", "Internet search results", or "More" are ignored.
     """
     target = contact_name.strip()
     headers = _build_section_headers(entries)
@@ -465,7 +472,7 @@ def _summarize_search_candidates(
     - "Contacts"
     - "Group Chats"
 
-    Entries belonging to "Chat History", "Official Accounts", or "More" are ignored.
+    Entries belonging to "Chat History", "Official Accounts", "Internet search results", or "More" are ignored.
     """
     headers = _build_section_headers(entries)
     contacts: list[str] = []
@@ -473,7 +480,7 @@ def _summarize_search_candidates(
 
     for entry in entries:
         # Skip section headers themselves.
-        if entry.text in ("Contacts", "Group Chats", "Chat History", "Official Accounts", "More"):
+        if entry.text in ("Contacts", "Group Chats", "Chat History", "Official Accounts", "Internet search results", "More"):
             continue
 
         section = _classify_section(entry, headers)
@@ -517,7 +524,7 @@ def _select_contact_from_search_results(
     """
     Try to open a chat by selecting an exact match from the global
     search results list, preferring Contacts over Group Chats and
-    ignoring the Chat History, Official Accounts, and More sections.
+    ignoring the Chat History, Official Accounts, "Internet search results", and More sections.
     """
     search_list = get_search_list(ax_app)
 
