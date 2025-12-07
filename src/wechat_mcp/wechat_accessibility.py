@@ -244,7 +244,9 @@ def focus_and_type_search(ax_app, text: str):
 def press_return():
     keycode_return = 36
     event_down = CGEventCreateKeyboardEvent(None, keycode_return, True)
+    CGEventSetFlags(event_down, 0)
     event_up = CGEventCreateKeyboardEvent(None, keycode_return, False)
+    CGEventSetFlags(event_up, 0)
     CGEventPost(kCGHIDEventTap, event_down)
     CGEventPost(kCGHIDEventTap, event_up)
 
