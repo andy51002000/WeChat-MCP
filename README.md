@@ -113,3 +113,4 @@ The helper scripts and MCP tools rely on:
 - [x] Detect and switch to contact by clicking
 - [x] Scroll to get full/more history messages
 - [x] Prefer exact match in Contacts/Group Chats search results
+- [ ] Support WeChat with Chinese language
