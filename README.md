@@ -1,147 +1,156 @@
+<div align="center">
+
 # WeChat MCP Server
 
-This project provides an MCP server that automates WeChat on macOS using the Accessibility API and screen capture. It exposes tools that LLMs can call to:
+[![PyPI version](https://badge.fury.io/py/wechat-mcp-server.svg)](https://badge.fury.io/py/wechat-mcp-server)
 
-- Fetch recent messages for a specific chat (contact or group)
-- Generate and send a reply to a chat based on recent history
+[中文](docs/README_zh.md) | English
 
-## Installation
+</div>
 
-The WeChat MCP server is published on PyPI as `wechat-mcp-server` and installs a `wechat-mcp` console script.
+An MCP server that automates WeChat on macOS using the Accessibility API and screen capture. It enables LLMs to interact with WeChat chats programmatically.
+
+## Features
+
+- 📨 Fetch recent messages from any chat (contact or group)
+- ✍️ Send automated replies based on chat history
+- 🤖 6 specialized Claude Code sub-agents for smart WeChat automation
+- 🔍 Smart chat search with exact name matching
+- 📜 Full message history scrolling and capture
+
+## Quick Start
+
+### Installation
 
 ```bash
 pip install wechat-mcp-server
 ```
 
-You can still use [`uv`](https://github.com/astral-sh/uv) for local development and dependency management when working with this repository.
-
-## Environment setup (using `uv`)
-
-For local development, this project uses `uv` to manage the environment.
-
-1. Install `uv` (if not already installed):
-
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
-
-2. From the project root, create/sync the environment:
-
-   ```bash
-   cd WeChat-MCP
-   uv sync
-   ```
-
-   This will create a virtual environment (if needed) and install dependencies defined in `pyproject.toml`.
-
-## Add the MCP server to configuration
-
-<details>
-  <summary>Claude Code</summary>
+### Setup with Claude Code
 
 ```bash
-# For pip
+# If installed via pip
 claude mcp add --transport stdio wechat-mcp -- wechat-mcp
-# For uv
+
+# If using uv for development
 claude mcp add --transport stdio wechat-mcp -- uv --directory $(pwd) run wechat-mcp
 ```
 
-</details>
-
 <details>
-  <summary>Codex</summary>
+<summary>Setup with Codex</summary>
 
 ```bash
-# For pip
+# If installed via pip
 codex mcp add wechat-mcp -- wechat-mcp
-# For uv
+
+# If using uv for development
 codex mcp add wechat-mcp -- uv --directory $(pwd) run wechat-mcp
 ```
 
 </details>
 
-The MCP server entrypoint is `wechat_mcp.mcp_server:main`, exposed as the `wechat-mcp` console script.
+### macOS Permissions
 
-Typical invocation:
+⚠️ **Important**: Grant Accessibility permissions to your terminal:
+
+1. Open **System Settings → Privacy & Security → Accessibility**
+2. Add your terminal application (Terminal.app, iTerm2, etc.)
+3. Ensure WeChat is running before using the server
+
+## Usage
+
+### Basic Commands
 
 ```bash
-# For pip
+# Run with default stdio transport
 wechat-mcp --transport stdio
-# For uv
+
+# Run with HTTP transport
+wechat-mcp --transport streamable-http --port 3001
+
+# Run with SSE transport
+wechat-mcp --transport sse --port 3001
+```
+
+### Available MCP Tools
+
+- **`fetch_messages_by_chat`** - Get recent messages from a chat
+- **`reply_to_messages_by_chat`** - Send a reply to a chat
+
+See [detailed API documentation](docs/detailed-guide.md) for full tool specifications.
+
+## Claude Code Sub-Agents
+
+This project includes 6 intelligent sub-agents designed specifically for WeChat automation. They enable natural language control of WeChat through Claude Code.
+
+### Available Sub-Agents
+
+1. **聊天记录总结器 (chat-summarizer)** - Summarize chat history and extract key information
+2. **消息撰写发送器 (message-composer)** - Compose and send context-aware messages
+3. **自动回复器 (auto-replier)** - Auto-generate and send appropriate replies
+4. **消息搜索器 (message-searcher)** - Search chat history for specific content
+5. **多聊天监控器 (multi-chat-checker)** - Monitor multiple chats and prioritize messages
+6. **聊天洞察分析器 (chat-insights)** - Analyze relationship dynamics and communication patterns
+
+📖 [View complete sub-agents guide](.claude/agents/README.md)
+
+### Quick Examples
+
+Claude would automatically select the right sub-agent for you.
+
+```
+# Summarize a chat
+帮我总结一下和小明的聊天
+
+# Send a message
+帮我给老板发消息，说项目已经完成了
+
+# Auto-reply
+帮我回复一下李总
+
+# Search messages
+在和小明的聊天里找一下我们约的见面时间
+
+# Check multiple chats
+看看小明、小红和工作群有什么新消息
+
+# Analyze relationship
+分析一下我和女朋友的聊天
+```
+
+## Development
+
+### Local Setup with uv
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone https://github.com/yourusername/WeChat-MCP.git
+cd WeChat-MCP
+uv sync
+
+# Run locally
 uv run wechat-mcp --transport stdio
 ```
 
-Supported transports:
+## Documentation
 
-- `stdio` (default)
-- `streamable-http` (with `--port`, default `3001`)
-- `sse` (with `--port`, default `3001`)
+- 📘 [Detailed Guide](docs/detailed-guide.md) - Complete API documentation and architecture
+- 🤖 [Sub-Agents Guide](.claude/agents/README.md) - How to use Claude Code sub-agents
 
-Example:
+## Requirements
 
-```bash
-# For pip
-wechat-mcp --transport streamable-http --port 3001
-# For uv
-uv run wechat-mcp --transport streamable-http --port 3001
-```
+- macOS (uses Accessibility API)
+- WeChat for Mac installed and running
+- Python 3.12+
+- Accessibility permissions for terminal
 
-## Tools exposed to MCP clients
+## Contributing
 
-The server is implemented in `src/wechat_mcp/mcp_server.py` and defines two `@mcp.tool()` functions:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- `fetch_messages_by_chat(chat_name: str, last_n: int = 50) -> list[dict]`
-  Opens the chat for `chat_name` (first via the left session list, then via the global search box if needed). When using global search it prefers an **exact name match** in the "Contacts" section, then in the "Group Chats" section, and explicitly ignores matches under "Chat History", "Official Accounts", or "More". If no exact match is found, it does **not** fall back to the top search result; instead it returns a structured error plus up to 15 candidate names from each of "Contacts" and "Group Chats" so the LLM can choose a more specific target. Once a chat is successfully opened, it uses scrolling plus screenshots to collect the **true last** `last_n` messages, even if they span multiple screens of history. Each message is a JSON object:
+## License
 
-  ```json
-  {
-    "sender": "ME" | "OTHER" | "UNKNOWN",
-    "text": "message text"
-  }
-  ```
-
-- `reply_to_messages_by_chat(chat_name: str, reply_message: str | null = null) -> dict`
-  Ensures the chat for `chat_name` is open (skipping an extra click when the current chat already matches), and (optionally) sends the provided `reply_message` using the Accessibility-based `send_message` helper. This tool is intended to be driven by the LLM that is already using this MCP: first call `fetch_messages_by_chat`, then compose a reply, then call this tool with that reply. Returns:
-
-  ```json
-  {
-    "chat_name": "The chat (contact or group)",
-    "reply_message": "The message that was sent (or null)",
-    "sent": true
-  }
-  ```
-
-If an error occurs, the tools return an object containing an `"error"` field describing the issue.
-
-Internally, `fetch_messages_by_chat` scrolls the WeChat message list using the system’s standard macOS scroll semantics (no third‑party scroll reversal tools enabled) and continues scrolling until it has assembled the true last `last_n` messages or reached the beginning of the chat history, rather than stopping after a fixed number of scroll steps.
-
-## Logging
-
-The project has a comprehensive logging setup:
-
-- Logs are written to a rotating file under the `logs/` directory (by default `logs/wechat_mcp.log`)
-- Logs are also sent to the terminal (stdout)
-
-You can customize the log directory via:
-
-- `WECHAT_MCP_LOG_DIR` – directory path where `.log` files should be stored (defaults to `logs` under the current working directory)
-
-## macOS and Accessibility requirements
-
-Because this project interacts with WeChat via the macOS Accessibility API:
-
-- WeChat must be running (`com.tencent.xinWeChat`)
-- The Python process (or the terminal app running it) must have Accessibility permissions enabled in **System Settings → Privacy & Security → Accessibility**
-
-The helper scripts and MCP tools rely on:
-
-- Accessibility tree inspection to find chat lists, search fields, and message lists
-- Screen capture to classify message senders (`ME` vs `OTHER` vs `UNKNOWN`)
-- Synthetic keyboard events to search, focus inputs, and send messages
-
-## TODO
-
-- [x] Detect and switch to contact by clicking
-- [x] Scroll to get full/more history messages
-- [x] Prefer exact match in Contacts/Group Chats search results
-- [ ] Support WeChat with Chinese language
+MIT License - see LICENSE file for details
