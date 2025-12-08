@@ -16,7 +16,7 @@ An MCP server that automates WeChat on macOS using the Accessibility API and scr
 
 - 📨 Fetch recent messages from any chat (contact or group)
 - ✍️ Send automated replies based on chat history
-- 🤖 6 specialized Claude Code sub-agents for smart WeChat automation
+- 🤖 5 specialized Claude Code sub-agents for smart WeChat automation
 - 🔍 Smart chat search with exact name matching
 - 📜 Full message history scrolling and capture
 
@@ -83,42 +83,17 @@ See [detailed API documentation](docs/detailed-guide.md) for full tool specifica
 
 ## Claude Code Sub-Agents
 
-This project includes 6 intelligent sub-agents designed specifically for WeChat automation. They enable natural language control of WeChat through Claude Code.
+This project includes 5 intelligent sub-agents designed specifically for WeChat automation. They enable natural language control of WeChat through Claude Code.
 
 ### Available Sub-Agents
 
 1. **聊天记录总结器 (chat-summarizer)** - Summarize chat history and extract key information
-2. **消息撰写发送器 (message-composer)** - Compose and send context-aware messages
-3. **自动回复器 (auto-replier)** - Auto-generate and send appropriate replies
-4. **消息搜索器 (message-searcher)** - Search chat history for specific content
-5. **多聊天监控器 (multi-chat-checker)** - Monitor multiple chats and prioritize messages
-6. **聊天洞察分析器 (chat-insights)** - Analyze relationship dynamics and communication patterns
+2. **自动回复器 (auto-replier)** - Auto-generate and send appropriate replies
+3. **消息搜索器 (message-searcher)** - Search chat history for specific content
+4. **多聊天监控器 (multi-chat-checker)** - Monitor multiple chats and prioritize messages
+5. **聊天洞察分析器 (chat-insights)** - Analyze relationship dynamics and communication patterns
 
 📖 [View complete sub-agents guide](.claude/agents/README.md)
-
-### Quick Examples
-
-Claude would automatically select the right sub-agent for you.
-
-```
-# Summarize a chat
-帮我总结一下和小明的聊天
-
-# Send a message
-帮我给老板发消息，说项目已经完成了
-
-# Auto-reply
-帮我回复一下李总
-
-# Search messages
-在和小明的聊天里找一下我们约的见面时间
-
-# Check multiple chats
-看看小明、小红和工作群有什么新消息
-
-# Analyze relationship
-分析一下我和女朋友的聊天
-```
 
 ## Development
 
@@ -155,4 +130,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - see [LICENSE](LICENSE) file for details

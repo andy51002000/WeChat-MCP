@@ -2,7 +2,7 @@
 
 # WeChat MCP Server
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-green.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -16,7 +16,7 @@
 
 - 📨 获取任何聊天（联系人或群组）的最近消息
 - ✍️ 基于聊天历史自动发送回复
-- 🤖 6 个专门为微信自动化设计的 Claude Code 子代理
+- 🤖 5 个专门为微信自动化设计的 Claude Code 子代理
 - 🔍 智能聊天搜索，支持精确名称匹配
 - 📜 完整的消息历史滚动和捕获
 
@@ -83,42 +83,17 @@ wechat-mcp --transport sse --port 3001
 
 ## Claude Code 子代理
 
-本项目包含 6 个专门为微信自动化设计的智能子代理。它们通过 Claude Code 实现对微信的自然语言控制。
+本项目包含 5 个专门为微信自动化设计的智能子代理。它们通过 Claude Code 实现对微信的自然语言控制。
 
 ### 可用的子代理
 
 1. **聊天记录总结器 (chat-summarizer)** - 总结聊天历史并提取关键信息
-2. **消息撰写发送器 (message-composer)** - 撰写并发送符合上下文的消息
-3. **自动回复器 (auto-replier)** - 自动生成并发送合适的回复
-4. **消息搜索器 (message-searcher)** - 在聊天历史中搜索特定内容
-5. **多聊天监控器 (multi-chat-checker)** - 监控多个聊天并优先处理消息
-6. **聊天洞察分析器 (chat-insights)** - 分析关系动态和沟通模式
+2. **自动回复器 (auto-replier)** - 自动生成并发送合适的回复
+3. **消息搜索器 (message-searcher)** - 在聊天历史中搜索特定内容
+4. **多聊天监控器 (multi-chat-checker)** - 监控多个聊天并优先处理消息
+5. **聊天洞察分析器 (chat-insights)** - 分析关系动态和沟通模式
 
 📖 [查看完整的子代理指南](../.claude/agents/README.md)
-
-### 快速示例
-
-Claude 会自动为你选择合适的子代理。
-
-```
-# 总结聊天
-帮我总结一下和小明的聊天
-
-# 发送消息
-帮我给老板发消息，说项目已经完成了
-
-# 自动回复
-帮我回复一下李总
-
-# 搜索消息
-在和小明的聊天里找一下我们约的见面时间
-
-# 检查多个聊天
-看看小明、小红和工作群有什么新消息
-
-# 分析关系
-分析一下我和女朋友的聊天
-```
 
 ## 开发
 
@@ -155,4 +130,4 @@ uv run wechat-mcp --transport stdio
 
 ## 许可证
 
-MIT License - 详见 LICENSE 文件
+MIT License - 详见 [LICENSE](../LICENSE) 文件
