@@ -7,14 +7,12 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 from .logging_config import logger
-from .wechat_accessibility import (
-    ChatMessage,
+from .add_contact_by_wechat_id_utils import (
     add_contact_by_wechat_id as ax_add_contact_by_wechat_id,
-    fetch_recent_messages,
-    get_current_chat_name,
-    open_chat_for_contact,
-    send_message,
 )
+from .fetch_messages_by_chat_utils import ChatMessage, fetch_recent_messages
+from .reply_to_messages_by_chat_utils import send_message
+from .wechat_accessibility import get_current_chat_name, open_chat_for_contact
 
 
 mcp = FastMCP("WeChat Helper MCP Server")
