@@ -13,7 +13,6 @@ from ApplicationServices import (
     kAXStaticTextRole,
     kAXTextAreaRole,
     kAXTextFieldRole,
-    kAXTitleAttribute,
     kAXValueAttribute,
     kAXWindowRole,
 )
