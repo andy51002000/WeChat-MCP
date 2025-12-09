@@ -86,7 +86,7 @@ The main MCP server implementation that:
 
 #### `src/wechat_mcp/wechat_accessibility.py`
 
-Contains all the low-level Accessibility API interactions:
+Holds the shared, low-level Accessibility helpers and WeChat UI navigation that are reused by all three tools:
 
 **Low-level Accessibility API helpers:**
 
@@ -94,6 +94,8 @@ Contains all the low-level Accessibility API interactions:
 - `dfs(element, predicate)` - Depth-first search in accessibility tree
 - `click_element_center(element)` - Synthesize mouse click
 - `send_key_with_modifiers(keycode, flags)` - Keyboard input simulation
+- `axvalue_to_point(ax_value)` / `axvalue_to_size(ax_value)` - Convert AXValue wrappers into Python tuples
+- `get_list_center(msg_list)` / `post_scroll(center, delta_lines)` - Compute list center and send scroll-wheel events
 
 **WeChat app interaction:**
 
@@ -101,59 +103,65 @@ Contains all the low-level Accessibility API interactions:
 - `get_current_chat_name()` - Get title of currently open chat
 - `_normalize_chat_title(name)` - Strip group member count suffix like "(23)"
 
-**Chat navigation:**
+**Chat navigation & global search:**
 
-- `find_chat_element_by_name(ax_app, chat_name)` - Find chat in session list
+- `collect_chat_elements(ax_app)` / `find_chat_element_by_name(ax_app, chat_name)` - Enumerate and resolve chats in the left session list
 - `open_chat_for_contact(chat_name)` - Open chat with smart fallback behavior:
   1. First tries sidebar session list
   2. If not found, uses global search with preference for exact matches
   3. Prioritizes "Contacts" over "Group Chats"
   4. Ignores "Chat History", "Official Accounts", "Internet search results"
   5. Returns error + candidates list if no exact match found
-
-**Search functionality:**
-
-- `find_search_field(ax_app)` - Locate WeChat search input
-- `focus_and_type_search(ax_app, text)` - Type into search via clipboard + keyboard
+- `find_search_field(ax_app)` / `focus_and_type_search(ax_app, text)` - Locate WeChat search input and type into it via clipboard + keyboard
 - `get_search_list(ax_app)` - Find search results list
-- `_expand_section_if_needed(search_list, section_title)` - Click "View All"
-- `_select_contact_from_search_results(ax_app, contact_name)` - Smart search with scrolling
+- `SearchEntry` + `_collect_search_entries(search_list)` - Collect visible rows (section headers, cards, “View All”) with Y positions
+- `_build_section_headers(entries)` / `_classify_section(entry, headers)` - Map entries into "Contacts", "Group Chats", etc.
+- `_find_exact_match_in_entries(entries, contact_name)` - Prefer exact contact/group matches
 - `_summarize_search_candidates(entries)` - Extract up to 15 contact + group names
+- `_expand_section_if_needed(search_list, section_title)` - Click "View All"
+- `_select_contact_from_search_results(ax_app, contact_name)` - Smart search with scrolling that ignores non‑contact sections
 
-**Contact management:**
+#### `src/wechat_mcp/add_contact_by_wechat_id_utils.py`
 
-- `add_contact_by_wechat_id(wechat_id, friending_msg, remark, tags, privacy, hide_my_posts, hide_their_posts)` - Add a new contact using a WeChat ID by:
-  - Typing the ID into the global search box
-  - Clicking the `"Search WeChat ID"` result card in the search list
-  - Using the `"Add Contacts"` window to press `"Add to Contacts"`
-  - Configuring the `"Send Friend Request"` window (friending message, remark, privacy, post‑visibility checkboxes) and clicking `"OK"`
+Implements the Accessibility flow for adding contacts by WeChat ID:
+
+- `add_contact_by_wechat_id(wechat_id, friending_msg, remark, tags, privacy, hide_my_posts, hide_their_posts)` - Drive the full "Search WeChat ID" → "Add Contacts" → "Send Friend Request" flow.
 - Helper functions:
   - `_click_more_card_by_title(ax_app, label)` - Click a search result card by its visible label (e.g. `"Search WeChat ID"`)
-  - `_wait_for_window(ax_app, title)` / `_find_window_by_title(ax_app, title)` - Locate and wait for WeChat windows such as `"Add Contacts"` and `"Send Friend Request"`
+  - `_find_window_by_title(ax_app, title)` / `_wait_for_window(ax_app, title)` - Locate and wait for windows such as `"Add Contacts"` and `"Send Friend Request"`
+  - `_click_add_to_contacts_button(add_contacts_window)` - Press `"Add to Contacts"` in the "Add Contacts" window
+  - `_set_checkbox_state(checkbox, desired)` / `_set_checkbox_by_title(window, title, desired)` - Toggle post‑visibility checkboxes
+  - `_click_privacy_option(window, label)` - Select `"Chats, Moments, WeRun, etc."` vs `"Chats Only"`
   - `_configure_friend_request_window(...)` - Apply friending message, remark, privacy, and post‑visibility settings in the `"Send Friend Request"` window
+
+#### `src/wechat_mcp/fetch_messages_by_chat_utils.py`
+
+Holds the message-list specific logic used by `fetch_messages_by_chat`:
 
 **Message fetching:**
 
-- `get_messages_list(ax_app)` - Find "Messages" list in UI
+- `get_messages_list(ax_app)` - Find the "Messages" list in the current chat UI
 - `fetch_recent_messages(last_n=100, max_scrolls=None)` - Core algorithm:
   1. Scrolls to bottom (newest messages)
   2. Repeatedly scrolls up in small steps
   3. Captures screenshot of message area at each position
   4. Collects visible messages and their positions/sizes
-  5. Classifies sender as "ME"/"OTHER"/"UNKNOWN" using pixel analysis
+  5. Classifies sender as `"ME"`/`"OTHER"`/`"UNKNOWN"` using pixel analysis
   6. Merges newly revealed older messages by aligning on anchor text
   7. Continues until `last_n` messages collected or history exhausted
 - `capture_message_area(msg_list)` - Take screenshot of message area
-- `scroll_to_bottom(msg_list, center)` - Scroll to newest messages
-- `scroll_up_small(center)` - Scroll up gradually
-- `post_scroll(center, delta_lines)` - Send scroll-wheel events
+- `scroll_to_bottom(msg_list, center)` / `scroll_up_small(center)` - Scroll through message history
 
 **Sender classification:**
 
-- `classify_sender_for_message(image, list_origin, message_pos, message_size)` - Pixel-based heuristic
-- `count_colored_pixels(image, left, top, right, bottom)` - Image processing
+- `SenderLabel = Literal["ME", "OTHER", "UNKNOWN"]` - Sender type
+- `ChatMessage` - Dataclass wrapping `sender` + `text` with `.to_dict()`
+- `count_colored_pixels(image, left, top, right, bottom)` - Image processing helper
+- `classify_sender_for_message(image, list_origin, message_pos, message_size)` - Pixel-based heuristic used by `fetch_recent_messages`
 
-**Message sending:**
+#### `src/wechat_mcp/reply_to_messages_by_chat_utils.py`
+
+Contains the helpers used by `reply_to_messages_by_chat` for sending messages:
 
 - `send_message(text)` - Send a message via Accessibility API
 - `find_input_field(ax_app)` - Locate chat input field
@@ -268,7 +276,7 @@ The search implementation prefers exact matches. If a contact name is not found:
 - [x] Scroll to get full/more history messages
 - [x] Prefer exact match in Contacts/Group Chats search results
 - [x] Add contact using WeChat ID
-- [ ] Refactor wechat accessibility codebase
+- [x] Refactor wechat accessibility codebase
 - [ ] Publish moment w/o media
 - [ ] Support WeChat with Chinese language
 - [ ] Identify OTHER with explicit name
