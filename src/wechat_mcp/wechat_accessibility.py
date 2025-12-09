@@ -912,7 +912,7 @@ def add_contact_by_wechat_id(
                 "stage": "search_wechat_id",
             }
 
-        # Step 3: Add Contacts window
+        # Step 3a: Add Contacts window
         add_window = _wait_for_window(ax_app, "Add Contacts", timeout=5.0)
         if add_window is None:
             error_msg = (
@@ -924,9 +924,19 @@ def add_contact_by_wechat_id(
                 "wechat_id": wechat_id,
                 "stage": "add_contacts_window",
             }
+
         # Wait a moment for the button to appear
         time.sleep(2)
-        _click_add_to_contacts_button(add_window)
+
+        # Step 3b: Click "Add to Contacts" button
+        try:
+            _click_add_to_contacts_button(add_window)
+        except RuntimeError as e:
+            return {
+                "error": str(e),
+                "wechat_id": wechat_id,
+                "stage": "click_add_to_contacts_button",
+            }
 
         # Step 4: Send Friend Request window
         request_window = _wait_for_window(ax_app, "Send Friend Request", timeout=5.0)
@@ -967,8 +977,15 @@ def add_contact_by_wechat_id(
             }
 
         logger.info("Clicking 'OK' to send friend request")
-        click_element_center(ok_button)
-        time.sleep(0.4)
+        try:
+            click_element_center(ok_button)
+            time.sleep(0.4)
+        except RuntimeError as e:
+            return {
+                "error": f"Failed to click OK button: {e}",
+                "wechat_id": wechat_id,
+                "stage": "click_ok_button",
+            }
 
         result: dict[str, Any] = {
             "wechat_id": wechat_id,
