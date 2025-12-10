@@ -40,6 +40,39 @@ claude mcp add --transport stdio wechat-mcp -- uv --directory $(pwd) run wechat-
 ```
 
 <details>
+<summary>在 Claude Desktop 中配置</summary>
+
+```json
+// 如果通过 pip 安装
+{
+  "mcpServers": {
+    "wechat-mcp": {
+      "type": "stdio",
+      "command": "wechat-mcp"
+    }
+  }
+}
+
+// 如果使用 uv 进行开发
+{
+  "mcpServers": {
+    "wechat-mcp": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "--directory",
+        "{path/to/wechat-mcp}",
+        "run",
+        "wechat-mcp"
+      ],
+    }
+  }
+}
+```
+
+</details>
+
+<details>
 <summary>在 Codex 中配置</summary>
 
 ```bash
