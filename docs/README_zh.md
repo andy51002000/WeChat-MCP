@@ -69,10 +69,10 @@ codex mcp add wechat-mcp -- uv --directory $(pwd) run wechat-mcp
 wechat-mcp --transport stdio
 
 # 使用 HTTP 传输方式运行
-wechat-mcp --transport streamable-http --port 3001
+wechat-mcp --transport streamable-http
 
 # 使用 SSE 传输方式运行
-wechat-mcp --transport sse --port 3001
+wechat-mcp --transport sse
 ```
 
 ### 可用的 MCP 工具

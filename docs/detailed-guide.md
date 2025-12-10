@@ -215,8 +215,8 @@ mcp[cli] >= 1.0.0                       # MCP server framework
 The MCP server supports multiple transport protocols:
 
 - **stdio** (default) - Standard input/output for local process communication
-- **streamable-http** - HTTP-based streaming transport (requires `--port`)
-- **sse** - Server-Sent Events transport (requires `--port`)
+- **streamable-http** - HTTP-based streaming transport
+- **sse** - Server-Sent Events transport
 
 Example usage:
 
@@ -225,10 +225,10 @@ Example usage:
 wechat-mcp --transport stdio
 
 # HTTP streaming
-wechat-mcp --transport streamable-http --port 3001
+wechat-mcp --transport streamable-http
 
 # Server-Sent Events
-wechat-mcp --transport sse --port 3001
+wechat-mcp --transport sse
 ```
 
 ## Development

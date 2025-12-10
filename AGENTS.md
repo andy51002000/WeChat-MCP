@@ -9,7 +9,7 @@
 ## Build, Run & Development
 - Install dependencies: `uv sync` from the repository root.
 - Run the MCP server (stdio): `uv run wechat-mcp --transport stdio`.
-- Run over HTTP/SSE: `uv run wechat-mcp --transport streamable-http --port 3001` or `--transport sse`.
+- Run over HTTP/SSE: `uv run wechat-mcp --transport streamable-http` or `--transport sse`.
 - Enable protocol debugging: `uv run wechat-mcp --mcp-debug --transport stdio`.
 
 ## Coding Style & Naming
