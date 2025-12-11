@@ -5,8 +5,9 @@
 - `fetch_messages_by_chat(chat_name, last_n)`
 - `reply_to_messages_by_chat(chat_name, reply_message, last_n)`
 - `add_contact_by_wechat_id(wechat_id, friending_msg, remark, tags, privacy, hide_my_posts, hide_their_posts)`
+- `publish_moment_without_media(content, publish)`
 
-使用规则：
+## `reply_to_messages_by_chat` 使用规则：
 
 1. 如果你还**没有**某个联系人/群聊的历史聊天记录：
    先调用 `fetch_messages_by_chat`（例如 `last_n: 50`），读取返回的 `sender` / `text` 列表，理解对话上下文。
