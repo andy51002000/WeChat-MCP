@@ -12,12 +12,14 @@ from ApplicationServices import (
     AXUIElementPerformAction,
     AXValueGetType,
     AXValueGetValue,
+    kAXButtonRole,
     kAXChildrenAttribute,
     kAXIdentifierAttribute,
     kAXListRole,
     kAXPositionAttribute,
     kAXRaiseAction,
     kAXRoleAttribute,
+    kAXSheetRole,
     kAXSizeAttribute,
     kAXStaticTextRole,
     kAXTextAreaRole,
@@ -89,6 +91,37 @@ def get_wechat_ax_app() -> Any:
         "Activated WeChat (bundle_id=%s, pid=%s)", bundle_id, app.processIdentifier()
     )
     return AXUIElementCreateApplication(app.processIdentifier())
+
+
+def _find_window_by_title(ax_app: Any, title: str):
+    """
+    Locate a top-level WeChat window with the given title.
+    """
+
+    def is_window(el, role, current_title, identifier):
+        return (
+            role == kAXWindowRole
+            and isinstance(current_title, str)
+            and current_title == title
+        )
+
+    return dfs(ax_app, is_window)
+
+
+def _wait_for_window(ax_app: Any, title: str, timeout: float = 5.0):
+    """
+    Wait for a window with the given title to appear, returning the AX
+    element or None if the timeout expires.
+    """
+    end = time.time() + timeout
+    while time.time() < end:
+        window = _find_window_by_title(ax_app, title)
+        if window is not None:
+            logger.info("Found window %r", title)
+            return window
+        time.sleep(0.1)
+    logger.warning("Timed out waiting for window %r", title)
+    return None
 
 
 def _normalize_chat_title(name: str) -> str:
@@ -200,6 +233,32 @@ def click_element_center(element) -> None:
     )
     event_up = CGEventCreateMouseEvent(None, kCGEventLeftMouseUp, CGPoint(cx, cy), 0)
     CGEventPost(kCGHIDEventTap, event_down)
+    CGEventPost(kCGHIDEventTap, event_up)
+
+
+def long_press_element_center(element, hold_seconds: float = 2.2) -> None:
+    """
+    Synthesize a long left mouse press at the visual center of the
+    given element.
+    """
+    pos_ref = ax_get(element, kAXPositionAttribute)
+    size_ref = ax_get(element, kAXSizeAttribute)
+    point = axvalue_to_point(pos_ref)
+    size = axvalue_to_size(size_ref)
+    if point is None or size is None:
+        raise RuntimeError("Failed to get bounds for element to long-press")
+
+    x, y = point
+    w, h = size
+    cx = x + w / 2.0
+    cy = y + h / 2.0
+
+    event_down = CGEventCreateMouseEvent(
+        None, kCGEventLeftMouseDown, CGPoint(cx, cy), 0
+    )
+    CGEventPost(kCGHIDEventTap, event_down)
+    time.sleep(max(0.0, hold_seconds))
+    event_up = CGEventCreateMouseEvent(None, kCGEventLeftMouseUp, CGPoint(cx, cy), 0)
     CGEventPost(kCGHIDEventTap, event_up)
 
 

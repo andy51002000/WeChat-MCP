@@ -120,6 +120,8 @@ Holds the shared, low-level Accessibility helpers and WeChat UI navigation that 
 - `_summarize_search_candidates(entries)` - Extract up to 15 contact + group names
 - `_expand_section_if_needed(search_list, section_title)` - Click "View All"
 - `_select_contact_from_search_results(ax_app, contact_name)` - Smart search with scrolling that ignores non‑contact sections
+- `_find_window_by_title(ax_app, title)` / `_wait_for_window(ax_app, title)` - Locate and wait for top‑level WeChat windows such as `"Add Contacts"`, `"Send Friend Request"`, or `"Moments"`
+- `click_element_center(element)` / `long_press_element_center(element, hold_seconds)` - Click or long‑press the visual center of an AX element
 
 #### `src/wechat_mcp/add_contact_by_wechat_id_utils.py`
 
@@ -128,11 +130,22 @@ Implements the Accessibility flow for adding contacts by WeChat ID:
 - `add_contact_by_wechat_id(wechat_id, friending_msg, remark, tags, privacy, hide_my_posts, hide_their_posts)` - Drive the full "Search WeChat ID" → "Add Contacts" → "Send Friend Request" flow.
 - Helper functions:
   - `_click_more_card_by_title(ax_app, label)` - Click a search result card by its visible label (e.g. `"Search WeChat ID"`)
-  - `_find_window_by_title(ax_app, title)` / `_wait_for_window(ax_app, title)` - Locate and wait for windows such as `"Add Contacts"` and `"Send Friend Request"`
   - `_click_add_to_contacts_button(add_contacts_window)` - Press `"Add to Contacts"` in the "Add Contacts" window
   - `_set_checkbox_state(checkbox, desired)` / `_set_checkbox_by_title(window, title, desired)` - Toggle post‑visibility checkboxes
   - `_click_privacy_option(window, label)` - Select `"Chats, Moments, WeRun, etc."` vs `"Chats Only"`
   - `_configure_friend_request_window(...)` - Apply friending message, remark, privacy, and post‑visibility settings in the `"Send Friend Request"` window
+
+#### `src/wechat_mcp/publish_moment_utils.py`
+
+Implements the Accessibility flow for publishing a Moments post without media:
+
+- `publish_moment_without_media(content)` - Drive the full `"WeChat" main window` → `"Moments"` window → long‑press `"Post"` → composer sheet → `"Post"` flow for text‑only Moments.
+- Helper functions:
+  - `_open_moments_window(ax_app, timeout)` - Click the `"Moments"` button and wait for the `"Moments"` window
+  - `_open_moment_composer(moments_window)` - Long‑press the `"Post"` button to reveal the composer sheet
+  - `_find_editor_root(moments_window, timeout)` - Prefer the AXSheet composer root, fallback to the `"Moments"` window
+  - `_find_moment_text_area(root)` - Locate the text entry area inside the composer
+  - `_find_post_button_in_editor(root)` - Find the `"Post"` button inside the composer editor root
 
 #### `src/wechat_mcp/fetch_messages_by_chat_utils.py`
 
@@ -278,6 +291,6 @@ The search implementation prefers exact matches. If a contact name is not found:
 - [x] Add contact using WeChat ID
 - [x] Refactor wechat accessibility codebase
 - [ ] Edit contact/group chat info
-- [ ] Publish moment w/o media
+- [x] Publish moment w/o media
 - [ ] Support WeChat with Chinese language
 - [ ] Identify OTHER with explicit name

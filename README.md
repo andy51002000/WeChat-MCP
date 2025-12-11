@@ -113,6 +113,7 @@ wechat-mcp --transport sse
 - **`fetch_messages_by_chat`** - Get recent messages from a chat
 - **`reply_to_messages_by_chat`** - Send a reply to a chat
 - **`add_contact_by_wechat_id`** - Add a new contact using a WeChat ID and send a friend request
+- **`publish_moment_without_media`** - Publish a text-only Moments post (no photos or videos)
 
 See [detailed API documentation](docs/detailed-guide.md) for full tool specifications.
 

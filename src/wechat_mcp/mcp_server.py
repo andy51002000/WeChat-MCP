@@ -11,6 +11,7 @@ from .add_contact_by_wechat_id_utils import (
     add_contact_by_wechat_id as ax_add_contact_by_wechat_id,
 )
 from .fetch_messages_by_chat_utils import ChatMessage, fetch_recent_messages
+from .publish_moment_utils import publish_moment_without_media as ax_publish_moment
 from .reply_to_messages_by_chat_utils import send_message
 from .wechat_accessibility import get_current_chat_name, open_chat_for_contact
 
@@ -201,6 +202,33 @@ def add_contact_by_wechat_id(
         return {
             "error": str(exc),
             "wechat_id": wechat_id,
+        }
+
+
+@mcp.tool()
+def publish_moment_without_media(content: str) -> dict[str, Any]:
+    """
+    Publish a Moments post containing only text (no media).
+
+    This will:
+    - Open the main WeChat window and click the "Moments" button.
+    - Long-press the "Post" button in the Moments window to open the
+      composer sheet.
+    - Fill the text entry area with the provided content.
+    - Click the "Post" button in the sheet to publish the moment.
+    """
+    logger.info(
+        "Tool publish_moment_without_media called (content_length=%d)",
+        len(content) if isinstance(content, str) else -1,
+    )
+    try:
+        result = ax_publish_moment(content=content)
+        return result
+    except Exception as exc:
+        logger.exception("Error in publish_moment_without_media: %s", exc)
+        return {
+            "error": str(exc),
+            "content": content,
         }
 
 

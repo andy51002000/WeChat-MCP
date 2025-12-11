@@ -14,19 +14,20 @@ from ApplicationServices import (
     kAXTextAreaRole,
     kAXTextFieldRole,
     kAXValueAttribute,
-    kAXWindowRole,
 )
 
 from .logging_config import logger
 from .wechat_accessibility import (
+    _find_window_by_title,
+    _wait_for_window,
+    _collect_search_entries,
     ax_get,
     axvalue_to_point,
+    click_element_center,
     dfs,
     focus_and_type_search,
     get_search_list,
     get_wechat_ax_app,
-    _collect_search_entries,
-    click_element_center,
 )
 
 
@@ -54,37 +55,6 @@ def _click_more_card_by_title(ax_app: Any, label: str) -> bool:
 
     logger.warning("Did not find %r entry in search results", target)
     return False
-
-
-def _find_window_by_title(ax_app: Any, title: str):
-    """
-    Locate a top-level WeChat window with the given title.
-    """
-
-    def is_window(el, role, current_title, identifier):
-        return (
-            role == kAXWindowRole
-            and isinstance(current_title, str)
-            and current_title == title
-        )
-
-    return dfs(ax_app, is_window)
-
-
-def _wait_for_window(ax_app: Any, title: str, timeout: float = 5.0):
-    """
-    Wait for a window with the given title to appear, returning the AX
-    element or None if the timeout expires.
-    """
-    end = time.time() + timeout
-    while time.time() < end:
-        window = _find_window_by_title(ax_app, title)
-        if window is not None:
-            logger.info("Found window %r", title)
-            return window
-        time.sleep(0.1)
-    logger.warning("Timed out waiting for window %r", title)
-    return None
 
 
 def _click_add_to_contacts_button(add_contacts_window) -> None:
