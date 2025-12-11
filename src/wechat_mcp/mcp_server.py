@@ -206,7 +206,10 @@ def add_contact_by_wechat_id(
 
 
 @mcp.tool()
-def publish_moment_without_media(content: str) -> dict[str, Any]:
+def publish_moment_without_media(
+    content: str,
+    publish: bool = True,
+) -> dict[str, Any]:
     """
     Publish a Moments post containing only text (no media).
 
@@ -215,14 +218,17 @@ def publish_moment_without_media(content: str) -> dict[str, Any]:
     - Long-press the "Post" button in the Moments window to open the
       composer sheet.
     - Fill the text entry area with the provided content.
-    - Click the "Post" button in the sheet to publish the moment.
+    - If `publish` is True (default), click the "Post" button in the
+      sheet to publish the moment; if False, leave the composer open
+      without sending.
     """
     logger.info(
-        "Tool publish_moment_without_media called (content_length=%d)",
+        "Tool publish_moment_without_media called (content_length=%d, publish=%s)",
         len(content) if isinstance(content, str) else -1,
+        publish,
     )
     try:
-        result = ax_publish_moment(content=content)
+        result = ax_publish_moment(content=content, publish=publish)
         return result
     except Exception as exc:
         logger.exception("Error in publish_moment_without_media: %s", exc)

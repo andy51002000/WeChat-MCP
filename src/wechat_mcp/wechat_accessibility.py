@@ -257,9 +257,13 @@ def long_press_element_center(element, hold_seconds: float = 2.2) -> None:
         None, kCGEventLeftMouseDown, CGPoint(cx, cy), 0
     )
     CGEventPost(kCGHIDEventTap, event_down)
-    time.sleep(max(0.0, hold_seconds))
-    event_up = CGEventCreateMouseEvent(None, kCGEventLeftMouseUp, CGPoint(cx, cy), 0)
-    CGEventPost(kCGHIDEventTap, event_up)
+    try:
+        time.sleep(max(0.0, hold_seconds))
+    finally:
+        event_up = CGEventCreateMouseEvent(
+            None, kCGEventLeftMouseUp, CGPoint(cx, cy), 0
+        )
+        CGEventPost(kCGHIDEventTap, event_up)
 
 
 def find_search_field(ax_app):

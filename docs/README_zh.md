@@ -113,6 +113,7 @@ wechat-mcp --transport sse
 - **`fetch_messages_by_chat`** - 获取聊天的最近消息
 - **`reply_to_messages_by_chat`** - 向聊天发送回复
 - **`add_contact_by_wechat_id`** - 通过微信号添加联系人并发送好友申请
+- **`publish_moment_without_media`** - 发布纯文字朋友圈（无图片或视频），也可以通过 `publish=False` 仅填充草稿而不真正发布
 
 完整的工具规格请查看[详细 API 文档](detailed-guide.md)。
 

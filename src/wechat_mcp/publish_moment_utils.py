@@ -67,7 +67,7 @@ def _open_moment_composer(moments_window: Any) -> None:
         raise RuntimeError("Could not find 'Post' button in Moments window")
 
     logger.info("Long-pressing 'Post' button to open composer sheet")
-    long_press_element_center(button, hold_seconds=2.2)
+    long_press_element_center(button, hold_seconds=1.4)
 
 
 def _find_moments_sheet(moments_window: Any, timeout: float = 5.0) -> Any | None:
@@ -132,7 +132,7 @@ def _find_post_button_in_editor(root: Any) -> Any | None:
     return dfs(root, is_post_button)
 
 
-def publish_moment_without_media(content: str) -> dict[str, Any]:
+def publish_moment_without_media(content: str, publish: bool = True) -> dict[str, Any]:
     """
     Publish a Moments post containing only text (no media).
 
@@ -143,7 +143,10 @@ def publish_moment_without_media(content: str) -> dict[str, Any]:
       composer sheet.
     - In the composer sheet, set the text entry area's value to the
       provided content.
-    - Click the "Post" button in the sheet to publish the moment.
+    - If `publish` is True (default), click the "Post" button in the
+      sheet to publish the moment; if False, leave the composer open
+      without sending, so that the user can modify the draft in the
+      composer.
     """
     if not isinstance(content, str) or not content.strip():
         return {
@@ -153,7 +156,9 @@ def publish_moment_without_media(content: str) -> dict[str, Any]:
         }
 
     logger.info(
-        "Starting publish_moment_without_media (content_length=%d)", len(content)
+        "Starting publish_moment_without_media (content_length=%d, publish=%s)",
+        len(content),
+        publish,
     )
 
     try:
@@ -192,6 +197,15 @@ def publish_moment_without_media(content: str) -> dict[str, Any]:
                 "stage": "set_text",
             }
 
+        if not publish:
+            logger.info(
+                "Moments composer text updated; publish=False so skipping Post click"
+            )
+            return {
+                "content": content,
+                "posted": False,
+            }
+
         logger.info("Moments composer text updated; clicking Post in sheet")
         post_button = _find_post_button_in_editor(editor_root)
         if post_button is None:
@@ -218,4 +232,3 @@ def publish_moment_without_media(content: str) -> dict[str, Any]:
             "content": content,
             "stage": "unexpected_error",
         }
-

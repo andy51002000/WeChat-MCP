@@ -139,7 +139,7 @@ Implements the Accessibility flow for adding contacts by WeChat ID:
 
 Implements the Accessibility flow for publishing a Moments post without media:
 
-- `publish_moment_without_media(content)` - Drive the full `"WeChat" main window` → `"Moments"` window → long‑press `"Post"` → composer sheet → `"Post"` flow for text‑only Moments.
+- `publish_moment_without_media(content, publish=True)` - Drive the full `"WeChat" main window` → `"Moments"` window → long‑press `"Post"` → composer sheet → `"Post"` flow for text‑only Moments. When `publish=False`, the composer is filled but the final `"Post"` button is not clicked, leaving the sheet open.
 - Helper functions:
   - `_open_moments_window(ax_app, timeout)` - Click the `"Moments"` button and wait for the `"Moments"` window
   - `_open_moment_composer(moments_window)` - Long‑press the `"Post"` button to reveal the composer sheet

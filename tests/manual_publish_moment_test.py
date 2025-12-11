@@ -10,11 +10,12 @@ def main() -> None:
     Run via:
         uv run python -m tests.manual_publish_moment_test
     """
-    content = "Test moment from WeChat-MCP automation (no media)."
-    result = publish_moment_without_media(content)
+    content = "今天吃了好吃的午餐！🍜🍣🍰 "
+    # Set publish=True to actually post the moment; use publish=False
+    # when testing without sending.
+    result = publish_moment_without_media(content, publish=False)
     print(result)
 
 
 if __name__ == "__main__":
     main()
-
