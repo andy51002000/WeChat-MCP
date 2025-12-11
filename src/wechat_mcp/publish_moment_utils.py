@@ -17,7 +17,6 @@ from .logging_config import logger
 from .wechat_accessibility import (
     _find_window_by_title,
     _wait_for_window,
-    ax_get,
     click_element_center,
     dfs,
     get_wechat_ax_app,
@@ -68,6 +67,7 @@ def _open_moment_composer(moments_window: Any) -> None:
 
     logger.info("Long-pressing 'Post' button to open composer sheet")
     long_press_element_center(button, hold_seconds=1.4)
+    time.sleep(0.3)
 
 
 def _find_moments_sheet(moments_window: Any, timeout: float = 5.0) -> Any | None:
