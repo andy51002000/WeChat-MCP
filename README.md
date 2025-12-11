@@ -123,11 +123,11 @@ This project includes 5 intelligent sub-agents designed specifically for WeChat 
 
 ### Available Sub-Agents
 
-1. **聊天记录总结器 (chat-summarizer)** - Summarize chat history and extract key information
-2. **自动回复器 (auto-replier)** - Auto-generate and send appropriate replies
-3. **消息搜索器 (message-searcher)** - Search chat history for specific content
-4. **多聊天监控器 (multi-chat-checker)** - Monitor multiple chats and prioritize messages
-5. **聊天洞察分析器 (chat-insights)** - Analyze relationship dynamics and communication patterns
+1. **Chat-summarizer** - Summarize chat history and extract key information
+2. **Auto-replier** - Auto-generate and send appropriate replies
+3. **Message-searcher** - Search chat history for specific content
+4. **Multi-chat-checker** - Monitor multiple chats and prioritize messages
+5. **Chat-insights** - Analyze relationship dynamics and communication patterns
 
 📖 [View complete sub-agents guide](.claude/agents/README.md)
 
