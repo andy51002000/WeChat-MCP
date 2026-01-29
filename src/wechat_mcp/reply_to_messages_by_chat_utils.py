@@ -132,21 +132,44 @@ def send_message(text: str) -> None:
 
         logger.info("Successfully set message text via keyboard simulation")
 
-    # Send the message
-    time.sleep(0.1)
-    press_return()
-    time.sleep(0.2)
+    # Send the message with retry logic to handle concurrent user interaction
+    max_retries = 5
+    for attempt in range(max_retries):
+        # Re-focus the input field before each attempt to ensure it has focus
+        AXUIElementPerformAction(input_field, kAXRaiseAction)
+        time.sleep(0.15)
 
-    # Final verification: check if the input field is now empty (message was sent)
-    final_value = ax_get(input_field, kAXValueAttribute)
-    if final_value and final_value.strip():
+        # Press Return to send
+        press_return()
+        time.sleep(0.3)
+
+        # Check if the input field is now empty (message was sent)
+        final_value = ax_get(input_field, kAXValueAttribute)
+
+        if not final_value or not final_value.strip():
+            logger.info("Message sent successfully")
+            return
+
+        # Message not sent yet, log and retry
         logger.warning(
-            "Input field still contains text after pressing Return: %r. "
-            "Message may not have been sent.",
+            "Attempt %d/%d: Input field still contains text after pressing Return: %r. "
+            "Retrying...",
+            attempt + 1,
+            max_retries,
             final_value,
         )
-        raise RuntimeError(
-            f"Message may not have been sent. Input field still contains: {final_value!r}"
-        )
 
-    logger.info("Message sent successfully")
+        # If this wasn't the last attempt, wait a bit before retrying
+        if attempt < max_retries - 1:
+            time.sleep(0.2)
+
+    # All retries failed
+    logger.error(
+        "Failed to send message after %d attempts. Input field still contains: %r",
+        max_retries,
+        final_value,
+    )
+    raise RuntimeError(
+        f"Message may not have been sent after {max_retries} attempts. "
+        f"Input field still contains: {final_value!r}"
+    )
